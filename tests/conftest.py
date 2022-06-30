@@ -1,11 +1,11 @@
 import flask
 from FlaskWebProject.models import User
-from FlaskWebProject import app
+from FlaskWebProject import create_app
 import pytest
 
 @pytest.fixture(scope='module')
 def test_client():
-    flask_app = app
+    flask_app = create_app()
     flask_app.testing = True
 
     with flask_app.test_client() as test_client:

@@ -1,4 +1,3 @@
-from FlaskWebProject import app
 
 def test_get_post_with_anonymous_user(test_client):
     """

@@ -1,4 +1,3 @@
-from FlaskWebProject import app
 
 def test_login_page_with_anonymous_user(test_client):
     """

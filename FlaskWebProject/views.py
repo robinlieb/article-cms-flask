@@ -88,6 +88,7 @@ def authorized():
         # TODO: Acquire a token from a built msal app, along with the appropriate redirect URI
         result = None
         if "error" in result:
+            app.logger.warning("Recieved error trying to aquire token")
             return render_template("auth_error.html", result=result)
         session["user"] = result.get("id_token_claims")
         # Note: In a real app, we'd use the 'name' property from session["user"] below

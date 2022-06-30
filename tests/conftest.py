@@ -1,3 +1,4 @@
+import flask
 from FlaskWebProject.models import User
 from FlaskWebProject import app
 import pytest

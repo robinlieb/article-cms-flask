@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, request, session, url_for
 from werkzeug.urls import url_parse
-from config import Config
+from instance.config import Config
 from FlaskWebProject import app
 from FlaskWebProject.forms import LoginForm
 from flask_login import current_user, login_user, logout_user, login_required

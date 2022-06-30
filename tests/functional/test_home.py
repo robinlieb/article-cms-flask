@@ -1,4 +1,3 @@
-from FlaskWebProject import app
 
 def test_home_page(test_client):
     """

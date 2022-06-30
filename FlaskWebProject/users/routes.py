@@ -1,69 +1,69 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, request, session, url_for
+from flask import render_template, flash, redirect, request, session, url_for, current_app
 from werkzeug.urls import url_parse
 from instance.config import Config
-from FlaskWebProject import app
 from FlaskWebProject.forms import LoginForm
 from flask_login import current_user, login_user, logout_user, login_required
 from FlaskWebProject.models import User, Post
 import msal
 import uuid
+from . import users_blueprint
 
-imageSourceUrl = 'https://'+ app.config['BLOB_ACCOUNT']  + '.blob.core.windows.net/' + app.config['BLOB_CONTAINER']  + '/'
+# imageSourceUrl = 'https://'+ current_app.config['BLOB_ACCOUNT']  + '.blob.core.windows.net/' + current_app.config['BLOB_CONTAINER']  + '/'
 
-@app.route('/')
-@app.route('/home')
+@users_blueprint.route('/')
+@users_blueprint.route('/home')
 @login_required
 def home():
     user = User.query.filter_by(username=current_user.username).first_or_404()
     posts = Post.query.all()
     return render_template(
-        'index.html',
+        'users/index.html',
         title='Home Page',
         posts=posts
     )
 
-@app.route('/login', methods=['GET', 'POST'])
+@users_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('users.home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('users.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('home')
+            next_page = url_for('users.home')
         return redirect(next_page)
     session["state"] = str(uuid.uuid4())
     auth_url = _build_auth_url(scopes=Config.SCOPE, state=session["state"])
-    return render_template('login.html', title='Sign In', form=form, auth_url=auth_url)
+    return render_template('users/login.html', title='Sign In', form=form, auth_url=auth_url)
 
-@app.route(Config.REDIRECT_PATH)  # Its absolute URL must match your app's redirect_uri set in AAD
+@users_blueprint.route(Config.REDIRECT_PATH)  # Its absolute URL must match your app's redirect_uri set in AAD
 def authorized():
     if request.args.get('state') != session.get("state"):
-        return redirect(url_for("home"))  # No-OP. Goes back to Index page
+        return redirect(url_for("users.home"))  # No-OP. Goes back to Index page
     if "error" in request.args:  # Authentication/Authorization failure
-        return render_template("auth_error.html", result=request.args)
+        return render_template("users/auth_error.html", result=request.args)
     if request.args.get('code'):
         cache = _load_cache()
         # TODO: Acquire a token from a built msal app, along with the appropriate redirect URI
         result = None
         if "error" in result:
-            app.logger.warning("Recieved error trying to aquire token")
-            return render_template("auth_error.html", result=result)
+            current_app.logger.warning("Recieved error trying to aquire token")
+            return render_template("users/auth_error.html", result=result)
         session["user"] = result.get("id_token_claims")
         # Note: In a real app, we'd use the 'name' property from session["user"] below
         # Here, we'll use the admin username for anyone who is authenticated by MS
         user = User.query.filter_by(username="admin").first()
         login_user(user)
         _save_cache(cache)
-    return redirect(url_for('home'))
+    return redirect(url_for('users.home'))
 
-@app.route('/logout')
+@users_blueprint.route('/logout')
 def logout():
     logout_user()
     if session.get("user"): # Used MS Login
@@ -74,7 +74,7 @@ def logout():
             Config.AUTHORITY + "/oauth2/v2.0/logout" +
             "?post_logout_redirect_uri=" + url_for("login", _external=True))
 
-    return redirect(url_for('login'))
+    return redirect(url_for('users.login'))
 
 def _load_cache():
     # TODO: Load the cache from `msal`, if it exists

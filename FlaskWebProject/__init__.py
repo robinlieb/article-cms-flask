@@ -10,7 +10,6 @@ from flask_session import Session
 
 app = Flask(__name__)
 app.config.from_object(Config)
-# TODO: Add any logging levels and handlers with app.logger
 app.logger.setLevel(logging.WARNING)
 streamHander = logging.StreamHandler()
 streamHander.setLevel(logging.WARNING)

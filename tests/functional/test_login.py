@@ -76,6 +76,7 @@ def test_login_already_logged_in(test_client, init_database, login_default_user)
     assert b'Logout' in response.data
     assert b'Author' in response.data
     assert b'Title' in response.data
+    assert b'Subtitle' in response.data
     assert b'Create New Post' in response.data
 
 def test_logout(test_client, init_database, login_default_user):

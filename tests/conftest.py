@@ -32,6 +32,7 @@ def init_database(test_client):
         post.user_id = user.id
         post.author = "John Smith"
         post.title = "Lorem ipsum dolor sit amet"
+        post.subtitle = "Consetetur sadipscing elitr"
         post.body = "Proin sit amet mi ornare, ultrices augue quis, facilisis tellus."
         db.session.add(post)
         db.session.commit()

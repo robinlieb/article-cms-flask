@@ -30,11 +30,13 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
+            current_app.logger.warning("Recieved login request with invalid username or password")
             return redirect(url_for('users.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('users.home')
+        current_app.logger.info("Successfully logged in user.")
         return redirect(next_page)
     session["state"] = str(uuid.uuid4())
     redirect_url = url_for('users.authorized', _external=True, _scheme='https')

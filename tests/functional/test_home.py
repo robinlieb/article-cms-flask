@@ -1,11 +1,26 @@
 
-def test_home_page(test_client):
+def test_home_page(test_client, init_database, login_default_user):
     """
     GIVEN a Flask application configured for testing
-    WHEN the '/login' page is requested (GET)
+    WHEN the '/' page is requested (GET)
     THEN check that the response is valid
     """
 
-    response = test_client.get('/login')
+    response = test_client.get('/', follow_redirects=True)
     assert response.status_code == 200
+    assert b'Logout' in response.data
+    assert b'Author' in response.data
+    assert b'Title' in response.data
+    assert b'Create New Post' in response.data
+
+def test_login_page_with_anonymous_user(test_client):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/' page is requested (GET) with anonymous user
+    THEN check that the response is valid
+    """
+
+    response = test_client.get('/', follow_redirects=True)
+    assert response.status_code == 200
+    print(response.data)
     assert b'Sign In' in response.data

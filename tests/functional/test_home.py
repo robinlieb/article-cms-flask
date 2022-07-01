@@ -24,3 +24,5 @@ def test_login_page_with_anonymous_user(test_client):
     assert response.status_code == 200
     print(response.data)
     assert b'Sign In' in response.data
+    assert b'Username' in response.data
+    assert b'Password' in response.data

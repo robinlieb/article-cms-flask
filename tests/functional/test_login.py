@@ -9,6 +9,8 @@ def test_login_page(test_client):
     response = test_client.get('/login')
     assert response.status_code == 200
     assert b'Sign In' in response.data
+    assert b'Username' in response.data
+    assert b'Password' in response.data
 
 def test_login_logout(test_client, init_database):
     """
@@ -38,6 +40,8 @@ def test_login_logout(test_client, init_database):
 
     assert response.status_code == 200
     assert b'Sign In' in response.data
+    assert b'Username' in response.data
+    assert b'Password' in response.data
 
 def test_login_invalid_login(test_client, init_database):
     """
@@ -87,3 +91,5 @@ def test_logout(test_client, init_database, login_default_user):
 
     assert response.status_code == 200
     assert b'Sign In' in response.data
+    assert b'Username' in response.data
+    assert b'Password' in response.data

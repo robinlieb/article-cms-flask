@@ -1,5 +1,5 @@
 
-def test_get_post_with(test_client, init_database, login_default_user):
+def test_get_post(test_client, init_database, login_default_user):
     """
     GIVEN a Flask application configured for testing
     WHEN the '/post/<int:id>' page is requested (GET)
@@ -38,3 +38,15 @@ def test_create_post_with_anonymous_user(test_client):
     assert b'Username' in response.data
     assert b'Password' in response.data
 
+def test_delete_post(test_client, init_database, login_default_user):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/post/delete/<int:id>' page is requested (GET)
+    THEN check that the response is valid
+    """
+
+    response = test_client.get('/post/delete/1', follow_redirects=True)
+    assert response.status_code == 200
+    assert b'John Smith' not in response.data
+    assert b'Lorem ipsum dolor sit amet' not in response.data
+    assert b'Proin sit amet mi ornare, ultrices augue quis, facilisis tellus.' not in response.data

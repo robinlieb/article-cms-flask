@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect, request, url_for, current_ap
 from FlaskWebProject.forms import PostForm
 from flask_login import current_user, login_required
 from FlaskWebProject.models import Post
+from FlaskWebProject import db
 from . import posts_blueprint
 
 @posts_blueprint.route('/new_post', methods=['GET', 'POST'])
@@ -35,6 +36,13 @@ def post(id):
         imageSource=_get_image_source_url(),
         form=form
     )
+
+@posts_blueprint.route('/post/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_post(id):
+    Post.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('users.home'))
 
 def _get_image_source_url():
     return 'https://'+ current_app.config['BLOB_ACCOUNT']  + '.blob.core.windows.net/' + current_app.config['BLOB_CONTAINER']  + '/'

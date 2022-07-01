@@ -28,6 +28,18 @@ def init_database(test_client):
 
     db.drop_all()
 
+@pytest.fixture(scope='function')
+def login_default_user(test_client):
+    test_client.post(
+        '/login',
+        data=dict(username='admin', password='helloworld'),
+        follow_redirects=True
+    )
+
+    yield
+
+    test_client.get('/logout', follow_redirects=True)
+
 @pytest.fixture(scope='module')
 def new_user():
     return User()

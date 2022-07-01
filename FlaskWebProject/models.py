@@ -7,10 +7,6 @@ import string, random
 from werkzeug.utils import secure_filename
 from flask import flash, current_app
 
-#blob_container = current_app.app_context().config['BLOB_CONTAINER']
-#storage_url = "https://{}.blob.core.windows.net/".format(current_app.app_context().config['BLOB_ACCOUNT'])
-#blob_service = BlobServiceClient(account_url=storage_url, credential=current_app.app_context().config['BLOB_STORAGE_KEY'])
-
 def id_generator(size=32, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -58,13 +54,16 @@ class Post(db.Model):
             Randomfilename = id_generator();
             filename = Randomfilename + '.' + fileextension;
             try:
-                blob_container = current_app.app_context().config['BLOB_CONTAINER']
-                storage_url = "https://{}.blob.core.windows.net/".format(current_app.app_context().config['BLOB_ACCOUNT'])
-                blob_service = BlobServiceClient(account_url=storage_url, credential=current_app.app_context().config['BLOB_STORAGE_KEY'])
-                blob_service.create_blob_from_stream(blob_container, filename, file)
+                blob_container = current_app.config['BLOB_CONTAINER']
+                storage_url = "https://{}.blob.core.windows.net/".format(current_app.config['BLOB_ACCOUNT'])
+                blob_service = BlobServiceClient(account_url=storage_url, credential=current_app.config['BLOB_STORAGE_KEY'])
+                blob_client = blob_service.get_blob_client(container=blob_container, blob=filename)
+                blob_client.upload_blob(file)
                 if(self.image_path):
-                    blob_service.delete_blob(blob_container, self.image_path)
+                    blob_client = blob_service.get_blob_client(container=blob_container, blob=self.image_path)
+                    blob_client.delete_blob()
             except Exception:
+                current_app.logger.error("Failed to upload or delete image.")
                 flash(Exception)
             self.image_path =  filename
         if new:

@@ -7,6 +7,8 @@ import pytest
 @pytest.fixture(scope='module')
 def test_client():
     flask_app = create_app(TestConfig)
+    client = flask_app.config['CLIENT_SECRET']
+    sec = flask_app.config['CLIENT_ID']
 
     with flask_app.test_client() as test_client:
         with flask_app.app_context():

@@ -24,6 +24,16 @@ def init_database(test_client):
 
     db.session.commit()
 
+    user = User.query.filter_by(username="admin").first()
+    if user is not None:
+        post = Post()
+        post.user_id = user.id
+        post.author = "John Smith"
+        post.title = "Lorem ipsum dolor sit amet"
+        post.body = "Proin sit amet mi ornare, ultrices augue quis, facilisis tellus."
+        db.session.add(post)
+        db.session.commit()
+
     yield
 
     db.drop_all()

@@ -39,6 +39,7 @@
         <div class="col-sm-4">
             {% if form.image_path.data %}
             <p><img src="{{ imageSource + form.image_path.data }}" width="250" height="250" /></p>
+            <p><a class="btn btn-default" href="{{ url_for('posts.delete_image', image_name=form.image_path.data) }}">Delete Image</a></p>
             {% endif %}
             <p>
                 {{ form.image_path.label }}<br>

@@ -71,3 +71,16 @@ class Post(db.Model):
         if new:
             db.session.add(self)
         db.session.commit()
+
+    def remove_image(self):
+        try:
+            blob_container = current_app.config['BLOB_CONTAINER']
+            storage_url = "https://{}.blob.core.windows.net/".format(current_app.config['BLOB_ACCOUNT'])
+            blob_service = BlobServiceClient(account_url=storage_url, credential=current_app.config['BLOB_STORAGE_KEY'])
+            blob_client = blob_service.get_blob_client(container=blob_container, blob=self.image_path)
+            blob_client.delete_blob()
+        except Exception:
+            current_app.logger.error("Failed to delete image.")
+            flash(Exception)
+        self.image_path = None
+        db.session.commit()

@@ -44,5 +44,11 @@ def delete_post(id):
     db.session.commit()
     return redirect(url_for('users.home'))
 
+@posts_blueprint.route('/post/delete/<image_name>/image', methods=['GET', 'POST'])
+@login_required
+def delete_image(image_name):
+    Post.query.filter_by(image_path=image_name).first().remove_image()
+    return redirect(url_for('users.home'))
+
 def _get_image_source_url():
     return 'https://'+ current_app.config['BLOB_ACCOUNT']  + '.blob.core.windows.net/' + current_app.config['BLOB_CONTAINER']  + '/'

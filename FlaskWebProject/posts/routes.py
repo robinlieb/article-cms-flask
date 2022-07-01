@@ -11,6 +11,7 @@ def new_post():
     if form.validate_on_submit():
         post = Post()
         post.save_changes(form, request.files['image_path'], current_user.id, new=True)
+        current_app.logger.info("Successfully created post.")
         return redirect(url_for('users.home'))
     return render_template(
         'posts/post.html',

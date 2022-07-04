@@ -26,7 +26,12 @@ def test_login_logout(test_client, init_database):
     )
 
     assert response.status_code == 200
+    assert b'admin' in response.data
     assert b'Logout' in response.data
+    assert b'Author' in response.data
+    assert b'Title' in response.data
+    assert b'Subtitle' in response.data
+    assert b'Create New Post' in response.data
 
     """
     GIVEN a Flask application configured for testing
@@ -73,6 +78,7 @@ def test_login_already_logged_in(test_client, init_database, login_default_user)
     )
 
     assert response.status_code == 200
+    assert b'admin' in response.data
     assert b'Logout' in response.data
     assert b'Author' in response.data
     assert b'Title' in response.data

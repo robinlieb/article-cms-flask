@@ -8,6 +8,7 @@ def test_home_page(test_client, init_database, login_default_user):
 
     response = test_client.get('/', follow_redirects=True)
     assert response.status_code == 200
+    assert b'admin' in response.data
     assert b'Logout' in response.data
     assert b'Author' in response.data
     assert b'Title' in response.data

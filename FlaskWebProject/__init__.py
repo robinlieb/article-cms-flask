@@ -15,9 +15,9 @@ login.login_view = 'users.login'
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_class)
-    app.logger.setLevel(logging.WARNING)
+    app.logger.setLevel(logging.INFO)
     streamHander = logging.StreamHandler()
-    streamHander.setLevel(logging.WARNING)
+    streamHander.setLevel(logging.INFO)
     app.logger.addHandler(streamHander)
     Session(app)
     initialize_extensions(app)
